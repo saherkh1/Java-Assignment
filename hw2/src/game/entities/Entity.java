@@ -4,13 +4,19 @@ import utilities.Point;
 
 public class Entity {
 
-	Point location;
+	private Point location;
 	public Entity()
 	{
-		location=new Point(0,0);
+		setLocation(new Point(0,0));
 	}
 	public Entity(Point location) {
-		this.location=new Point(location.getX(),location.getY());
+		this.setLocation(new Point(location.getX(),location.getY()));
 		
+	}
+	public Point getLocation() {
+		return location;
+	}
+	public void setLocation(Point location) {
+		this.location = location;
 	}
 }

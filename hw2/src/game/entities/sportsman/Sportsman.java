@@ -1,14 +1,15 @@
 package game.entities.sportsman;
 
 import game.entities.MobileEntity;
+import game.enums.Gender;
 
 public class Sportsman extends MobileEntity{
 	
 	private String name;
 	private double age;
-	private String gender;
+	private Gender gender;
 	
-	public Sportsman(String name, double age, String gender, double maxSpeed, double acceleration) {
+	public Sportsman(String name, double age, Gender gender, double acceleration, double maxSpeed) {
 		super(maxSpeed, acceleration);
 		this.setName(name);
 		this.setGender(gender);
@@ -23,11 +24,11 @@ public class Sportsman extends MobileEntity{
 		this.name = name;
 	}
 
-	public String getGender() {
+	public Gender getGender() {
 		return gender;
 	}
 
-	public void setGender(String gender) {
+	public void setGender(Gender gender) {
 		this.gender = gender;
 	}
 
