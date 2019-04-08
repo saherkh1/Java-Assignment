@@ -1,5 +1,10 @@
 package game.arena;
 
-public class IArena {
+import game.entities.IMobileEntity;
+
+public interface IArena {
+	
+	public double getFriction();
+	Boolean isFinished(IMobileEntity me);
 
 }
