@@ -1,17 +1,18 @@
 package game.competition;
 
 import java.util.ArrayList;
-import game.arena.IArena;
+import game.arena.WinterArena;
 import game.entities.sportsman.WinterSportsman;
+import utilities.ValidationUtils;
 
 public abstract class Competition {
 
-	private IArena arena;
+	private WinterArena arena;
 	private int maxCompetitors;
 	private ArrayList<Competitor> activeCompetitors;
 	private ArrayList<Competitor> finishedCompetitors;
 	
-	public Competition(IArena arena,int maxCompetitors) {
+	public Competition(WinterArena arena,int maxCompetitors) {
 		activeCompetitors = new ArrayList<Competitor>();
 		finishedCompetitors = new ArrayList<Competitor>();
 		this.setArena(arena);
@@ -21,38 +22,26 @@ public abstract class Competition {
 	public abstract boolean isValidCompetitor(Competitor competitor);
 	public abstract void addCompetitor(Competitor competitor);
 	public void playTurn() {
-		ArrayList<Competitor> arr = new ArrayList<Competitor>();
-		arr.addAll(activeCompetitors);
-		int i=-1;
-		if (!hasActiveCompetitors()) {
-			System.out.println("race finished!!!");
-			int a=0;
-			for(Object racer : this.finishedCompetitors) {
-				System.out.println("#"+(a+1)+" "+racer);
-				a++;
+		ArrayList<Competitor> arr = new ArrayList<Competitor>(activeCompetitors);
+		for(Competitor racer : arr) {
+			((WinterSportsman) racer).move(arena.getFriction());
+			if(this.getArena().isFinished(((WinterSportsman)racer))) {
+				finishedCompetitors.add(racer);
+				activeCompetitors.remove(racer);
 			}
 		}
-		else
-			for(Competitor racer : arr) {
-				i=arr.indexOf(racer);
-				((WinterSportsman)racer).move(arena.getFriction());
-				if(this.getArena().isFinished(((WinterSportsman)racer))) {
-					finishedCompetitors.add(racer);
-					activeCompetitors.remove(i);
-				}
-			}
 	}
 	public boolean hasActiveCompetitors() {
 		return !(this.activeCompetitors.isEmpty());
 	}
 
 	
-
-	public IArena getArena() {
+	public WinterArena getArena() {
 		return arena;
 	}
 
-	public void setArena(IArena arena) {
+	public void setArena(WinterArena arena) {
+		ValidationUtils.assertNotNull(arena);
 		this.arena = arena;
 	}
 
@@ -61,6 +50,7 @@ public abstract class Competition {
 	}
 
 	public void setMaxCompetitors(int maxCompetitors) {
+		ValidationUtils.assertNotNegative(maxCompetitors);
 		this.maxCompetitors = maxCompetitors;
 	}
 
@@ -68,16 +58,9 @@ public abstract class Competition {
 		return activeCompetitors;
 	}
 
-	public void setActiveCompetitors(ArrayList<Competitor> activeCompetitors) {
-		this.activeCompetitors = activeCompetitors;
-	}
-
 	public ArrayList<Competitor> getFinishedCompetitors() {
 		return finishedCompetitors;
 	}
 
-	public void setFinishedCompetitors(ArrayList<Competitor> finishedCompetitors) {
-		this.finishedCompetitors = finishedCompetitors;
-	}
 
 }

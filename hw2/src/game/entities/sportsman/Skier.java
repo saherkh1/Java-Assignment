@@ -10,4 +10,7 @@ public class Skier extends WinterSportsman{
 	}
 	
 
+	public String toString() {
+		return "Skier " + getName();
+	}
 }

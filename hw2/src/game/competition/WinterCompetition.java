@@ -1,6 +1,6 @@
 package game.competition;
 
-import game.arena.IArena;
+import game.arena.WinterArena;
 import game.entities.sportsman.WinterSportsman;
 import game.enums.Discipline;
 import game.enums.Gender;
@@ -12,7 +12,7 @@ public abstract class WinterCompetition extends Competition{
 	private League league;
 	private Gender gender;
 	
-	public WinterCompetition(IArena arena,int maxCompetitors, Discipline discipline, League league, Gender gender) {
+	public WinterCompetition(WinterArena arena,int maxCompetitors, Discipline discipline, League league, Gender gender) {
 		super(arena, maxCompetitors);
 		this.setDiscipline(discipline);
 		this.setLeague(league);
@@ -27,8 +27,15 @@ public abstract class WinterCompetition extends Competition{
 
 	@Override
 	public void addCompetitor(Competitor competitor) {
-		if(isValidCompetitor(competitor))
-			this.getActiveCompetitors().add(competitor);
+		if(getActiveCompetitors().size() >= getMaxCompetitors()) {
+			throw new IllegalStateException(getArena() + " is full max = " + getMaxCompetitors());
+		} 
+		else 
+			if(isValidCompetitor(competitor)) {
+				competitor.initRace();
+				this.getActiveCompetitors().add(competitor);
+			} else throw new IllegalArgumentException("Invalid competitor " + competitor);
+
 		
 	}
 	

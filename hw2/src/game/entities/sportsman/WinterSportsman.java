@@ -27,13 +27,16 @@ public class WinterSportsman extends Sportsman implements Competitor,IMobileEnti
 
 	@Override
 	public void move(double friction) {
-		if(this.getSpeed()<this.getMaxSpeed()) {
+/*		if(this.getSpeed()<this.getMaxSpeed()) {
 			double s=(this.getSpeed()+this.getAcceleration()*friction);
 			if(s>this.getMaxSpeed())
 				this.setSpeed(getMaxSpeed());
 			else
 				this.setSpeed(s);
-		}
+		}*/
+		setSpeed(getSpeed() + (getAcceleration() * (1 - friction)));
+		setLocation(new Point(getLocation().getX() + getSpeed(), getLocation().getY()));
+	
 	}
 
 
@@ -47,7 +50,7 @@ public class WinterSportsman extends Sportsman implements Competitor,IMobileEnti
 
 	@Override
 	public void initRace() {
-		// TODO Auto-generated method stub
+		this.setLocation(new Point());
 		
 	}
 	
