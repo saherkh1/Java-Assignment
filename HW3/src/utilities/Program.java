@@ -18,6 +18,8 @@ import game.enums.*;
 
 import java.lang.reflect.Constructor;
 
+import design.mainFrame;
+
 /**
  * @author Itzhak Eretz Kdosha
  * Main class(run demo)
@@ -75,6 +77,9 @@ public class Program {
 
 	public static void main(String[] args) {
 
+		mainFrame frame = new mainFrame();
+		//SwingApplication frame=new SwingApplication();
+		
 		System.out.println("================= Test 1 =================");
 		Skier skier1 = new Skier("sk1",
 				23.0,
