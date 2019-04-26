@@ -1,5 +1,7 @@
 package game.competition;
 
-public class Competitor {
+public interface Competitor {
 
+	public void initRace();
+	
 }
