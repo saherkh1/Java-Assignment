@@ -17,6 +17,7 @@ public abstract class Competition {
     private IArena arena;
     private final ArrayList<Competitor> activeCompetitors;
     private final ArrayList<Competitor> finishedCompetitors;
+    private int activeCompetitorsCount=0;
     private final int maxCompetitors;
 
     /**
@@ -29,6 +30,7 @@ public abstract class Competition {
         this.activeCompetitors = new ArrayList<>();
         this.finishedCompetitors = new ArrayList<>();
         this.arena = arena;
+        this.activeCompetitorsCount=0;
     }
 
     /**
@@ -50,6 +52,7 @@ public abstract class Competition {
         if(isValidCompetitor(competitor)){
             competitor.initRace();
             activeCompetitors.add(competitor);
+            activeCompetitorsCount++;
         }
         else{
             throw new IllegalArgumentException("Invalid competitor "+ competitor);
@@ -87,4 +90,19 @@ public abstract class Competition {
     public ArrayList<Competitor> getFinishedCompetitors() {
         return new ArrayList<>(finishedCompetitors);
     }
+
+	public IArena getArena() {
+		return arena;
+	}
+
+	public void setArena(IArena arena) {
+		this.arena = arena;
+	}
+	public int getActiveCompetitorsCount() {
+		return activeCompetitors.size();
+	}
+	public Competitor getActiveCompetitors(int i) {
+		return activeCompetitors.get(i);
+	}
+    
 }

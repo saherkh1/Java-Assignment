@@ -43,4 +43,9 @@ public class WinterCompetition extends Competition {
         }
         return false;
     }
+
+	public Gender getGender() {
+		return gender;
+	}
+    
 }

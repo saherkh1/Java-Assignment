@@ -1,35 +1,47 @@
 package design;
 
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.Image;
+import java.awt.SystemColor;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
+import com.sun.org.apache.bcel.internal.generic.LoadClass;
 
-
+import factory.CompBuilder;
 import game.arena.WinterArena;
 import game.competition.Competition;
+import game.competition.Competitor;
 import game.competition.SkiCompetition;
 import game.competition.SnowboardCompetition;
 import game.competition.WinterCompetition;
+import game.entities.sportsman.Sportsman;
 import game.enums.Discipline;
 import game.enums.Gender;
 import game.enums.League;
 import game.enums.SnowSurface;
 import game.enums.WeatherCondition;
-
-import java.awt.SystemColor;
-import java.awt.Toolkit;
-
-import javax.swing.JTextField;
-import javax.swing.JComboBox;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import sun.security.util.Length;
 /**
  *the main frame  of the race containing all the parts of the main page of the race
  * include race and arena setters and start and show buuton
@@ -37,7 +49,7 @@ import java.awt.event.ActionEvent;
  */
 public class mainFrame extends JFrame {
 	
-
+	//private static ArrayList<Competitors> competitors;
 	private JPanel contentPane;
 	private JTextField arenaLengthTxt;
 	private JTextField maxCompititorsTxt;
@@ -45,13 +57,22 @@ public class mainFrame extends JFrame {
 	private JTextField ageTxt;
 	private JTextField maxSpeedTxt;
 	private JTextField accelerTxt;
-	private String[] snowS= {"Powder","Crud","Ice"},weather={"Sunny","Cloudy","Stormy"},comp= {"Ski","Snowborder","Winter"},disc= {"Slalom","Giant_Slalom","DowHill","FreeStyle"};
+	private String[] snowS= {"Powder","Crud","Ice"},weather={"Sunny","Cloudy","Stormy"},comp= {"Ski","Snowborder"},disc= {"Slalom","Giant_Slalom","DowHill","FreeStyle"};
 	String[] league={"Junior","Adult","Senior"},gender= {"Female","Male"};
 	private WinterArena arena=null;
 	ImageIcon img;
+	private int compitiorsNumber = 0;
+	private ImageIcon compititorsImg  = null;
 	boolean build=false,createComp=false,addComp=false;
-	private Competition competition;
+	private WinterCompetition competition;
 	private JTable info;
+	private int length=1000;
+	private int Height=700;
+	private boolean raceStarted=false;
+	private int maxCompetitors;
+	private int racersNumber=0;
+	private String imgName=null;
+	private static CompBuilder builder= CompBuilder.getInstance();
 
 	/**
 	 * Launch the application.
@@ -73,34 +94,24 @@ public class mainFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public mainFrame() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setTitle("Compitition");
-		setSize(1000, 700);
-		setResizable(true);
-
-		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-
-		// Determine the new location of the window
-		int w = this.getSize().width;
-		int h = this.getSize().height;
-		int x = (dim.width-w)/2;
-		int y = (dim.height-h)/2;
-
-		// Move the window
-		this.setLocation(x, y);
-
-		contentPane = new JPanel();
-		contentPane.setSize(1000, 700);
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
+		super("Compition");
+		
+		this.pack();
+		updateFrame();
+		
+	}
+		
+	public JPanel getControlsPanel() {
+		JPanel contentPane = new JPanel();
 		contentPane.setLayout(null);
+		contentPane.setPreferredSize(new Dimension(140, Height));//.setSize(1000, 700);
+		
 
 
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
 		panel.setBorder(new LineBorder(SystemColor.textHighlight));
-		panel.setBounds(801, 0, 191, 159);
-		contentPane.add(panel);
+		panel.setBounds(801, 0, 181, 159);
 		JLabel buildArenaLabel = new JLabel("<html><u>BUILD ARENA</u></html>");
 
 		buildArenaLabel.setForeground(SystemColor.textHighlight);
@@ -143,12 +154,13 @@ public class mainFrame extends JFrame {
 
 		buildArenaButton.setBounds(11, 130, 160, 22);
 		panel.add(buildArenaButton);
-
+		contentPane.add(panel); 
+		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(new LineBorder(SystemColor.textHighlight));
 		panel_1.setBounds(801, 156, 181, 235);
 		panel_1.setLayout(null);
-		contentPane.add(panel_1);
+		
 
 		JLabel createCompLabel = new JLabel("<html><u>CREATE COMPITION</u></html>");
 		createCompLabel.setForeground(SystemColor.textHighlight);
@@ -210,12 +222,13 @@ public class mainFrame extends JFrame {
 		createCompButt.setFont(new Font("Tahoma", Font.BOLD, 10));
 		createCompButt.setBounds(11, 207, 160, 22);
 		panel_1.add(createCompButt);
-
+		contentPane.add(panel_1);
+		
 		JPanel panel_2 = new JPanel();
 		panel_2.setBorder(new LineBorder(SystemColor.textHighlight));
 		panel_2.setBounds(801, 386, 181, 210);
 		panel_2.setLayout(null);
-		contentPane.add(panel_2);
+		
 
 		JLabel addCompLabel = new JLabel("<html><u>ADD COMPETITOR</u></html>");
 		addCompLabel.setFont(new Font("Tahoma", Font.BOLD, 10));
@@ -271,13 +284,13 @@ public class mainFrame extends JFrame {
 		addCompititorButt.setFont(new Font("Tahoma", Font.BOLD, 10));
 		addCompititorButt.setBounds(11, 181, 160, 22);
 		panel_2.add(addCompititorButt);
-
+		contentPane.add(panel_2);
 
 		JPanel panel_3 = new JPanel();
 		panel_3.setBorder(new LineBorder(SystemColor.textHighlight));
 		panel_3.setBounds(801, 592, 181, 61);
 		panel_3.setLayout(null);
-		contentPane.add(panel_3);
+		
 
 		JButton showButt = new JButton("Show info");
 		showButt.setFont(new Font("Tahoma", Font.BOLD, 10));
@@ -288,11 +301,12 @@ public class mainFrame extends JFrame {
 		startButt.setFont(new Font("Tahoma", Font.BOLD, 10));
 		startButt.setBounds(11, 5, 160, 22);
 		panel_3.add(startButt);
-
+		contentPane.add(panel_3);
 
 		/***************************Build arena**********************************/
 
 		buildArenaButton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				
 				if( arenaLengthTxt.getText()==null || arenaLengthTxt.getText()=="") {
@@ -301,8 +315,8 @@ public class mainFrame extends JFrame {
 				}
 				else {
 
-					double length = Double.parseDouble(arenaLengthTxt.getText());
-					if(length>900 || length<700) {
+					 Height = (int)Double.parseDouble(arenaLengthTxt.getText());
+					if(Height>900 || Height<700) {
 						JOptionPane.showMessageDialog(null, "Invalid input values: Please try again.");
 						return;
 					}
@@ -316,7 +330,7 @@ public class mainFrame extends JFrame {
 						surface=SnowSurface.ICE;
 
 					WeatherCondition condition;
-					String imgName;
+					
 
 					if(((String)weatherCombo.getSelectedItem()).equals("Sunny")) 
 						condition=WeatherCondition.SUNNY;
@@ -327,22 +341,14 @@ public class mainFrame extends JFrame {
 					else 
 						condition=WeatherCondition.STORMY;
 
-					arena = new WinterArena(length, surface, condition);
-					contentPane.setSize(1000, (int)length);
-					setSize(1000, (int)length);
-
+					try {
+						arena = builder.buildArena("game.arena.WinterArena",Height, surface, condition);
+					} catch (Exception ex) {
+						JOptionPane.showMessageDialog(null, ex);
+					}
 					imgName=(String)weatherCombo.getSelectedItem();
-					img=new ImageIcon(imgName+".jpg");
-					Image newImage = img.getImage().getScaledInstance(802, (int)length, Image.SCALE_DEFAULT);
-					ImageIcon icon = new ImageIcon(newImage);
-					JLabel arenaImage = new JLabel(icon);
-					arenaImage.setBounds(0, 0, 802, (int)length);
-					panel_3.setBounds(801, 592, 181, (int)length-592);
-					JOptionPane.showMessageDialog(null, "icons\\"+imgName+".jpg");
-					contentPane.add(arenaImage);
 					
-					build=true;
-
+					updateFrame();
 				}
 			}
 		});
@@ -353,13 +359,13 @@ public class mainFrame extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
+				
 				if(build==false) {
 					JOptionPane.showMessageDialog(null, "Please build arena, create competition and add competitors");
 					return;
 				}
 
-				int maxCompetitors = Integer.parseInt(maxCompititorsTxt.getText());
+				 maxCompetitors = Integer.parseInt(maxCompititorsTxt.getText());
 				if(maxCompetitors<20 || maxCompetitors<1) {
 					JOptionPane.showMessageDialog(null, "Invalid number of compititors.it should be btween 1 and 20");
 					return;		
@@ -392,18 +398,22 @@ public class mainFrame extends JFrame {
 				else
 					g=Gender.MALE;
 				
-				
-				
+				String currentCompition=compitCombo.getSelectedItem().toString(),compitionClass=null;
+				compititorsImg  = new ImageIcon(new ImageIcon("icons/" + currentCompition + g + ".png").getImage()
+						.getScaledInstance(70, 70, Image.SCALE_DEFAULT));
 				if(((String)compitCombo.getSelectedItem()).equals("Ski")) {
-					competition = new SkiCompetition(arena, maxCompetitors, d, l, g);
+					compitionClass="game.competition.SkiCompetition";
 				}
 				else if(((String)compitCombo.getSelectedItem()).equals("Snowborder")) {
-					competition = new SnowboardCompetition(arena, maxCompetitors, d, l, g);
+					compitionClass="game.competition.SnowboardCompetition";
 				}
-				else
-					competition = new WinterCompetition(arena, maxCompetitors, d, l, g);
-
-
+				try {
+					competition=builder.buildCompetition(compitionClass, arena, maxCompetitors, d, l, g);
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(null, ex);
+				}
+				
+				
 			}
 		});
 
@@ -414,11 +424,69 @@ public class mainFrame extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
+
+				
 				if(build==false || createComp==false) {
 					JOptionPane.showMessageDialog(null, "Please build arena, create competition and add competitors");
 					return;
 				}
+				if (!(competition.hasActiveCompetitors())) {
+					JOptionPane.showMessageDialog(null, "Race finished! Please build a new arena.");
+					return;
+				}
+				if (raceStarted) {
+					JOptionPane.showMessageDialog(null, "Race started! No racers can be added.");
+					return;
+				}
+				if (arena == null) {
+					JOptionPane.showMessageDialog(null, "Please build arena first!");
+					return;
+				}
+				if (racersNumber == maxCompetitors) {
+					JOptionPane.showMessageDialog(null, "No more racers can be added!");
+					return;
+				}
+				String name;
+				double maxSpeed;
+				double acceleration;
+				int age;
+				try {
+					name = nameTxt.getText();
+					maxSpeed = Double.parseDouble(maxSpeedTxt.getText());
+					acceleration = Double.parseDouble(accelerTxt.getText());
+					age=(int)Double.parseDouble(ageTxt.getText());
+					
+					if (name.isEmpty() || maxSpeed <= 0 || acceleration <= 0 || age<=0 )
+						throw new Exception();
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(null, "Invalid input values! Please try again.");
+					return;
+				}
+
+				String racerType = (String) compitCombo.getSelectedItem();
+
+				
+
+				String racerClass = null;
+				if (racerType.equals("Ski"))
+					racerClass = "game.entities.sportsman.Skier";
+				else 
+					racerClass = "game.entities.sportsman.Snowboarder";
+				
+				
+				try {
+					//(String racerType, String name,double age,Gender gender , double acceleration,double maxSpeed)
+					Competitor racer = builder.buildSportsman(racerClass, name, age, competition.getGender(), acceleration, maxSpeed);
+					competition.addCompetitor(racer);
+					racersNumber++;
+						
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(null,ex);//.getLocalizedMessage() );
+					return;
+				
+				
+
+			}
 			}
 		});
 		
@@ -429,11 +497,42 @@ public class mainFrame extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				if(build==false || createComp==false || addComp==false) {
 					JOptionPane.showMessageDialog(null, "Please build arena, create competition and add competitors");
 					return;
 				}
+				if (arena == null || racersNumber == 0) {
+					JOptionPane.showMessageDialog(null, "Please build arena first and add racers!");
+					return;
+				}
+				if (competition.hasActiveCompetitors()) {
+					JOptionPane.showMessageDialog(null, "Race finished! Please build a new arena and add racers.");
+					return;
+				}
+				if (raceStarted) {
+					JOptionPane.showMessageDialog(null, "Race already started!");
+					return;
+				}
+				try {
+					raceStarted = true;
+					(new Thread() {
+						public void run() {
+							while (competition.hasActiveCompetitors()) {
+								try {
+									Thread.sleep(30);
+								} catch (InterruptedException ex) {
+									ex.printStackTrace();
+								}
+								updateFrame();
+							}
+							updateFrame();
+						}
+					}).start();
+				} 
+				catch (Exception ex) {
+					ex.printStackTrace();
+				}
+				
 			}
 		});
 		
@@ -443,7 +542,6 @@ public class mainFrame extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				if(build==false || createComp==false || addComp==false) {
 					JOptionPane.showMessageDialog(null, "Please build arena, create competition and add competitors");
 					return;
@@ -455,6 +553,51 @@ public class mainFrame extends JFrame {
 				
 			}
 		});
+		
+		return contentPane;
 
+	}
+	
+	public JPanel getArenaPanel() {
+		
+		JPanel arenaPanel = new JPanel();
+		arenaPanel.setLayout(null);
+		arenaPanel.setPreferredSize(new Dimension((int)length-181, (int)Height));
+		ImageIcon imageIcon1 = new ImageIcon(new ImageIcon("icons\\"+imgName+".jpg").getImage().getScaledInstance((int)length-181, (int)Height, Image.SCALE_DEFAULT));
+		JLabel picLabel1 = new JLabel(imageIcon1);
+		picLabel1.setLocation(0, 0);
+		//picLabel1.setSize((int)length + 80, (int)Height);
+		picLabel1.setBounds(0, 0, 802, 700);
+		arenaPanel.add(picLabel1);
+
+		//call compition and get racers location to update the icons
+		if (racersNumber>0)
+			for (int i=0; i < competition.getActiveCompetitorsCount();i++  ){
+				JLabel picLabel2 = new JLabel(compititorsImg);
+				picLabel2.setLocation((int) competition.getActiveCompetitors(i).getLocation().getX() + 5,(int) competition.getActiveCompetitors(i).getLocation().getY());
+				picLabel2.setSize(70, 70);
+				picLabel1.add(picLabel2);
+		}
+		
+		return arenaPanel;
+	}
+	public JPanel getMainPanel() {
+		JPanel mainPanel = new JPanel();
+		mainPanel.setLayout(new BorderLayout());
+		mainPanel.setSize(length, Height);
+		
+
+		mainPanel.add(getArenaPanel());//.add(getControlsPanel()));//, BorderLayout.WEST);
+		mainPanel.add(getControlsPanel());//, BorderLayout.EAST);
+		//mainPanel.add(vertSepar, BorderLayout.CENTER);
+		return mainPanel;
+	}
+	
+	private void updateFrame() {
+		this.setContentPane(getMainPanel());
+		this.pack();
+		this.setLocation(0,0);
+		this.setSize(length, Height);
+		this.setVisible(true);
 	}
 }
