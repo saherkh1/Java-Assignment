@@ -8,6 +8,7 @@ import game.competition.Competition;
 import game.competition.Competitor;
 import game.competition.WinterCompetition;
 import game.entities.sportsman.Sportsman;
+import game.entities.sportsman.WinterSportsman;
 import game.enums.Discipline;
 import game.enums.Gender;
 import game.enums.League;
@@ -36,13 +37,14 @@ public class CompBuilder {
 	
 
 
-
-	public Competitor buildSportsman(String racerType, String name,double age,Gender gender , double acceleration,double maxSpeed)
+	
+    
+	public WinterSportsman buildSportsman(String racerType, String name,double age,Gender gender , double acceleration,double maxSpeed,Discipline discipline)
 		throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException,
 		IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 			this.classObject = classLoader.loadClass(racerType);
-			this.constructor = classObject.getConstructor(String.class, double.class,Gender.class ,double.class,double.class);
-			return (Competitor) this.constructor.newInstance(name, age,gender, acceleration, maxSpeed);
+			this.constructor = classObject.getConstructor(String.class, double.class,Gender.class ,double.class,double.class,Discipline.class);
+			return (WinterSportsman) this.constructor.newInstance(name, age,gender, acceleration, maxSpeed, discipline);
 
 	}
 	//WinterCompetition(WinterArena arena, int maxCompetitors, Discipline discipline, League league, Gender gender)
@@ -52,7 +54,6 @@ public class CompBuilder {
 				this.classObject = classLoader.loadClass(competitionType);
 				this.constructor = classObject.getConstructor(WinterArena.class, int.class,Discipline.class ,League.class,Gender.class);
 				return (WinterCompetition) this.constructor.newInstance(  arena,  maxCompetitors,  discipline,  league,  gender);
-
 		}
 	
 	public WinterArena buildArena(String ArenaType,double len, SnowSurface surface,WeatherCondition condetion)
@@ -61,6 +62,5 @@ public class CompBuilder {
 				this.classObject = classLoader.loadClass(ArenaType);
 				this.constructor = classObject.getConstructor(double.class, SnowSurface.class,WeatherCondition.class);
 				return (WinterArena) this.constructor.newInstance( len,  surface, condetion);
-
 		}
 }
